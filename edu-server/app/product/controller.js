@@ -8,6 +8,9 @@ const Tag = require('../tag/model');
 const store = async (req, res, next) => {
     try {
         let payload = req.body;
+        // console.log(payload)
+        // let tag = payload.tags.split(",")
+        // console.log(tag)
 
         // update -> relasi dengan category
         if(payload.category){
@@ -21,14 +24,35 @@ const store = async (req, res, next) => {
         }
 
         //update -> relasi dengan tags
+        // if(payload.tags && payload.tags.length > 0){
+        //     // console.log(payload.tags)
+        //     let finalTag = []
+        //     let newTag = payload.tags.split(",")
+        //     // console.log(newTag)
+        //     let tagg = await Tag
+        //         .find({name: {$in: newTag}})
+        //         // .then(res => finalTag.push(res))
+        //         // console.log(finalTag)
+        //         tagg.map(tag => console.log(tag._id))
+        //     // let restag = finalTag.map(tag => tag.map(tag => console.log(tag)))
+        //     // // restag.map(tag => console.log(tag))
+        //     if(finalTag.length){
+        //         payload = {...payload, tags: tagg.map(tag => tag._id)}
+        //     }else{
+        //         delete payload.tags;
+        //     }
+        // }
+
         if(payload.tags && payload.tags.length > 0){
             let tags = await Tag
-            .find({name: {$in: payload.tags}})
-            if(tags.length){
+            .find({name: {$in: payload.tags.split(",")}})
+            // console.log(tags)
+            if(tags && tags.length > 0){
                 payload = {...payload, tags: tags.map(tag => tag._id)}
             }else{
                 delete payload.tags;
             }
+            console.log(payload)
         }
 
         if(req.file){
@@ -43,6 +67,8 @@ const store = async (req, res, next) => {
 
             src.on('end', async () => {
                 try {
+                    // let product = {...payload, image_url: filename}
+                    // console.log(product)
                     let product = new Product({...payload, image_url: filename})
                     await product.save()
                     return res.json(product);
@@ -107,7 +133,7 @@ const index = async (req, res, next) => {
         }
 
         if(tags.length){
-            let tagsRes = await Tag.find({name: {$in: tags}})
+            let tagsRes = await Tag.find({name: {$in: tags.split(",")}})
 
             if(tagsRes.length > 0){
                 criteria = {...criteria, tags: {$in: tagsRes.map(tag => tag._id)}}

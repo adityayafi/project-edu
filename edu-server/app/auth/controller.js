@@ -10,6 +10,7 @@ const register = async(req, res, next) => {
     try {
         
         const payload = req.body;
+        console.log(payload);
         let user = new User(payload)
         console.log(user)
         await user.save()
@@ -29,6 +30,7 @@ const register = async(req, res, next) => {
 
 const localStrategy = async (email, password, done) => {
     try {
+        console.log(email, password);
         let user = 
             await User
             .findOne({email})

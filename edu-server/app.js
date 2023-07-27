@@ -37,6 +37,7 @@ app.use('/api', deliveryAddressRoute);
 app.use('/api', cartRoute);
 app.use('/api', orderRoute);
 app.use('/api', invoiceRoute);
+app.use('/public', express.static(path.join(__dirname, './public/images/products')));
 
 app.use('/', (req, res) => {
   res.render('index', {
