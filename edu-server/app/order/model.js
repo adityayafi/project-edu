@@ -46,7 +46,7 @@ orderSchema.post('save', async function(){
         total: parseInt(sub_total + this.delivery_fee),
         delivery_address: this.delivery_address
     });
-    await Invoice.save();
+    await invoice.save();
 });
 
 module.exports = model('Order', orderSchema);

@@ -56,7 +56,7 @@ export const cartSlice = createSlice({
             }
 
             state.totalItem -= 1;
-            state.totalPrice -= state.products[currProdIndexcopy].price;
+            state.totalPrice -= currProdIndexcopy.price;
 
             localStorage.removeItem('cart');
             localStorage.setItem('cart', JSON.stringify(state));

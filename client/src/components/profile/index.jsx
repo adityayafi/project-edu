@@ -1,38 +1,23 @@
-import { Card } from "antd"
-import DataTable from 'react-data-table-component';
-
+import { Card, Table } from "antd"
+import { currentUser } from "../../utils";
 
 const Profile = () => {
-    let {user} = JSON.parse(localStorage.getItem('auth'))
-    console.log(user.full_name)
 
-    const col = [
-        {
-            name: 'Nama',
-            selector: row => row.nama
-        },
-        {
-            name: 'Email',
-            selector: row => row.email
-        }
-    ];
+    const {user} = JSON.parse(currentUser);
 
-    const data = [
-        {
-            id: 1,
-            nama:'Nama',
-            email: user.full_name
-        },
-        {
-            id: 2,
-            nama:'Email',
-            email: user.email
-        }
-    ]
     return (
         <div className="px-4 py-3 w-screen">
             <Card title="Biodata User">
-                <DataTable columns={col} data={data} noTableHead className="border-t border-b"/>
+                <table className="w-full">
+                    <tr className="border-y-2">
+                        <td className="py-3">Nama</td>
+                        <td>{user.full_name}</td>
+                    </tr>
+                    <tr className="border-t-2">
+                        <td className="py-3">Email</td>
+                        <td>{user.email}</td>
+                    </tr>
+                </table>
             </Card>
         </div>
     )

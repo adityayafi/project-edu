@@ -66,19 +66,10 @@ const RegisterPage = () => {
             console.log(error)
         }
 
-        // await axios.post(`${import.meta.env.VITE_BACKEND_URL}/auth/register`, data, {
-        //     headers: {"Content-Type": "application/x-www-form-urlencoded"}
-        // })
-        // .then(res => console.log('Register Success', res))
-
     }
 
     const bgImage = {
         backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url("https://images.unsplash.com/photo-1606787366850-de6330128bfc?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=870&q=80")',
-    }
-
-    const handleLogout = () => {
-        logoutUser();
     }
 
     return (
@@ -100,7 +91,6 @@ const RegisterPage = () => {
                         <button type="submit" className="bg-slate-600 opacity-90 w-full h-10 mt-4 rounded-3xl text-white font-bold hover:opacity-100">REGISTER</button>
 
                     </form>
-                    <button onClick={handleLogout}>LOGOUT</button>
                 </div>
             </div>            
         </div>

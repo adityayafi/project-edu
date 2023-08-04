@@ -59,7 +59,7 @@ const LoginPage = () => {
                 products: data.map(item => ({
                     ...item.product,
                     totalPrice: item.price,
-                    qty: useItems.qty,
+                    qty: item.qty,
                 })),
                 totalItem: data.map(items => items.qty).reduce((prev, curr) => prev + curr, 0),
                 totalPrice: data.map(items => items.price).reduce((prev, curr) => prev + curr, 0)

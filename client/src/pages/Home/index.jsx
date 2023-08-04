@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCartPlus} from '@fortawesome/free-solid-svg-icons'
 import { getProduct, getTag } from "../../api/product";
 import { useEffect, useState } from "react";
-import Cards from "../../components/card";
+import Cards, { CardSkeleton } from "../../components/card";
 import { useDispatch, useSelector } from "react-redux";
 import { setQuery } from "../../features/query/querySlice";
 
@@ -17,6 +17,7 @@ const Home = () => {
     const [data, setData] = useState([]);
     const [currentPage, setcurrentPage] = useState(1);
     const [totalPage, setTotalPage] = useState(0)
+    const [loading, setLoading] = useState(true)
 
     const fetchTag = async () => {
         try {
@@ -33,6 +34,7 @@ const Home = () => {
             const response = await getProduct(`tags=${selectedTag}&category=${query.categories}&q=${query.q}&skip=${(currentPage - 1) * 10}`)
             const result = response.data;
             setData(data => result.data);
+            setLoading(false);
             setTotalPage(result.count);
             if(result.count <= 10){
                 setcurrentPage(1)
@@ -43,14 +45,18 @@ const Home = () => {
     }
 
     const handleSearch = (value) => {
-        // console.log(value)
         dispatch(setQuery({ q: value}))
+    }
+
+    const handleChangeTag = (tagName, checked) => {
+        const nextTag = checked ? [...selectedTag, tagName] : selectedTag.filter((tag) => tag !== tagName);
+        setSelectedTag(nextTag);
     }
 
     useEffect(() => {
         fetchProduct();
         fetchTag();
-    },[query, currentPage])
+    },[query, currentPage, selectedTag])
 
     return (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 block justify-center">
@@ -64,17 +70,23 @@ const Home = () => {
             {/* Tags */}
             <div className="mt-4 w-full flex px-1 items-center">
                 <h2 className='mr-1 mt-1'>Tags:</h2>
-                {tag.map((tag, i) => {return <TagLabel key={i} name={tag.name} keys={tag._id}/>})}
+                {tag.map((tag, i) => {return <TagLabel key={i} name={tag.name} handleChange={handleChangeTag} keys={tag._id}/>})}
             </div>
             
             {/* Card */}
 
             <Row gutter={16} className="mt-10">
-                {data.map((items, i) => {
-                    return (
-                        <Cards items={items} key={i} keyCard={i}/>
+                {
+                    loading? (
+                        <CardSkeleton />
+                    ) : (
+                        data.map((items, i) => {
+                            return (
+                                <Cards items={items} keyCard={i}/>
+                            )
+                        })
                     )
-                })}
+                }
             </Row>
             <Pagination 
                 className="pb-10" 

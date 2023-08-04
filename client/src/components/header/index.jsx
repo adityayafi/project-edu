@@ -11,10 +11,9 @@ import { setQuery } from '../../features/query/querySlice';
 
 
 const AppHeader = () => {
-    const {user} = localStorage.getItem('auth')
+    // const {user} = localStorage.getItem('auth')
     const pathname = window.location.pathname;
     const dispatch = useDispatch();
-    const navigate = useNavigate();
     const [category, setCategory] = useState([]);
     const totalItem = useSelector((state) => state.cart.totalItem);
 
@@ -42,7 +41,7 @@ const AppHeader = () => {
                 {
                     key: '1',
                     label: (
-                    <Link className='w-40 flex' to={'login'}>
+                    <Link className='w-40 flex' onClick={() => window.location.assign('/login')}>
                         Login
                     </Link>
                     ),
@@ -50,7 +49,7 @@ const AppHeader = () => {
                 {
                     key: '2',
                     label: (
-                    <Link className='w-40 flex' to={'register'}>
+                    <Link className='w-40 flex' onClick={() => window.location.assign('/register')}>
                         Register
                     </Link>
                     ),
@@ -82,12 +81,7 @@ const AppHeader = () => {
         dispatch(setQuery({ categories: value}));
     }
 
-    // const handleToCart = () => {
-    //     if(!user) return navigate('/login');
-
-    // }
-
-    const excludeNavMenu = ['/account', '/account/profile', '/account/order', '/account/address', '/login', '/register']
+    const excludeNavMenu = ['/account', '/account/profile', '/account/order', '/account/address', '/login', '/register', '/cart', '/checkout', '/admin']
 
     return (
         <nav className="bg-gray-800">
@@ -119,7 +113,7 @@ const AppHeader = () => {
                             arrow
                             trigger={['click']}
                             >
-                            <a className="p-2 ml-2 text-slate-300 hover:text-white"><FontAwesomeIcon icon={faUser} /></a>
+                            <a className="p-2 ml-2 text-slate-300 hover:text-white"><FontAwesomeIcon icon={faUser}/></a>
                         </Dropdown>
                     </div>
                 </div>
