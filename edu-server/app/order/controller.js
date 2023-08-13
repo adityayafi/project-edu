@@ -85,7 +85,28 @@ const index = async (req, res, next) => {
     }
 }
 
+const update = async (req, res, next) => {
+    try {
+        let {id} = req.params;
+        let payload = req.body;
+        let order = await Order.findByIdAndUpdate(id, {...payload, status: payload.status});
+
+        return res.json(order);
+    } catch (err) {
+        if(err && err.name === 'ValidationError'){
+            return res.json({
+                error: 1,
+                message: err.message,
+                fields: err.errors
+            });
+        }
+
+        next(err); 
+    }
+}
+
 module.exports = {
     store,
-    index
+    index,
+    update
 }

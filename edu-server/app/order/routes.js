@@ -10,4 +10,8 @@ router.get('/orders',
     policy_check('view', 'Order'),
     orderController.index);
 
+router.put('/orders/:id',
+    policy_check('update', 'Order'),
+    orderController.update);
+
 module.exports = router;
