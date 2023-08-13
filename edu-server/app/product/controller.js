@@ -23,30 +23,9 @@ const store = async (req, res, next) => {
             }
         }
 
-        //update -> relasi dengan tags
-        // if(payload.tags && payload.tags.length > 0){
-        //     // console.log(payload.tags)
-        //     let finalTag = []
-        //     let newTag = payload.tags.split(",")
-        //     // console.log(newTag)
-        //     let tagg = await Tag
-        //         .find({name: {$in: newTag}})
-        //         // .then(res => finalTag.push(res))
-        //         // console.log(finalTag)
-        //         tagg.map(tag => console.log(tag._id))
-        //     // let restag = finalTag.map(tag => tag.map(tag => console.log(tag)))
-        //     // // restag.map(tag => console.log(tag))
-        //     if(finalTag.length){
-        //         payload = {...payload, tags: tagg.map(tag => tag._id)}
-        //     }else{
-        //         delete payload.tags;
-        //     }
-        // }
-
         if(payload.tags && payload.tags.length > 0){
             let tags = await Tag
             .find({name: {$in: payload.tags.split(",")}})
-            // console.log(tags)
             if(tags && tags.length > 0){
                 payload = {...payload, tags: tags.map(tag => tag._id)}
             }else{
@@ -113,7 +92,7 @@ const store = async (req, res, next) => {
 
 const index = async (req, res, next) => {
     try {
-        let {skip = 0, limit = 10, q = '', category = '', tags = []} = req.query;
+        let {skip = 0, limit = 0, q = '', category = '', tags = []} = req.query;
 
         let criteria = {};
 
@@ -262,9 +241,22 @@ const destroy = async (req, res, next) => {
     }
 }
 
+const show = async (req, res, next) => {
+    try {
+        let {id} = req.params;
+        let product = await Product.findById(id).populate('tags').populate('category')
+
+        return res.json(product)
+
+    } catch (err) {
+        next(err)
+    }
+}
+
 module.exports = {
     store,
     index,
     update,
-    destroy
+    destroy,
+    show
 }

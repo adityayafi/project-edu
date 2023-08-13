@@ -6,6 +6,7 @@ const { policy_check } = require('../../middlewares');
 const productController = require('./controller');
 
 router.get('/products', productController.index);
+router.get('/products/:id', productController.show);
 
 router.post('/products', 
     multer({dest: os.tmpdir()}).single('image'),
