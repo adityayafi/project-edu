@@ -15,7 +15,9 @@ const store = async (req, res, next) => {
                 message: `You cannot place an order because there are no items in your cart`
             })
         }
+
         let address = await DeliveryAddress.findById(delivery_address);
+
         let order = new Order({
             _id: new Types.ObjectId(),
             status: 'waiting_for_payment',
@@ -29,6 +31,7 @@ const store = async (req, res, next) => {
             },
             user: req.user._id
         });
+
         let orderItems = 
         await OrderItem
         .insertMany(items.map(item => ({
@@ -39,6 +42,7 @@ const store = async (req, res, next) => {
             order: order._id,
             product: item.product._id
         })));
+        
         orderItems.forEach(item => order.order_items.push(item));
         order.save();
         await Cartitem.deleteMany({user: req.user._id});

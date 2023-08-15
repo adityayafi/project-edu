@@ -64,7 +64,7 @@ const store = async (req, res, next) => {
                 }
             });
 
-            src.on('error', async () => {
+            src.on('error', async (err) => {
                 next(err);
             });
 
@@ -199,7 +199,7 @@ const update = async (req, res, next) => {
                 }
             });
 
-            src.on('error', async () => {
+            src.on('error', async (err) => {
                 next(err);
             });
 
