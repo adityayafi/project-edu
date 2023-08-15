@@ -1,8 +1,5 @@
-import Carousel from "../../components/carousel";
-import { ShowTag, TagLabel } from "../../components/tag";
-import {Button, Card, Col, Pagination, Row} from 'antd';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCartPlus} from '@fortawesome/free-solid-svg-icons'
+import {TagLabel } from "../../components/tag";
+import {Pagination, Row} from 'antd';
 import { getProduct, getTag } from "../../api/product";
 import { useEffect, useState } from "react";
 import Cards, { CardSkeleton } from "../../components/card";
@@ -31,11 +28,12 @@ const Home = () => {
 
     const fetchProduct = async () => {
         try {
-            const response = await getProduct(`tags=${selectedTag}&category=${query.categories}&q=${query.q}&skip=${(currentPage - 1) * 10}`)
+            const response = await getProduct(`tags=${selectedTag}&category=${query.categories}&q=${query.q}&skip=${(currentPage - 1) * 10}&limit=${10}`)
             const result = response.data;
             setData(data => result.data);
             setLoading(false);
             setTotalPage(result.count);
+            console.log(result.count)
             if(result.count <= 10){
                 setcurrentPage(1)
             }
