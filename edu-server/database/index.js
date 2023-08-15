@@ -3,7 +3,7 @@ const {dbHost, dbPass, dbName, dbPort, dbUser} = require('../app/config');
 mongoose.set("strictQuery", false);
 try {
     // mongoose.connect(`mongodb://${dbUser}:${dbPass}@${dbHost}:${dbPort}/${dbName}?authSource=admin`);
-    mongoose.connect(`mongodb+srv://${dbUser}:${dbPass}@${dbHost}/${dbName}?retryWrites=true&w=majority&authSource=admin`);
+    mongoose.connect(`mongodb+srv://${dbUser}:${dbPass}@${dbHost}/${dbName}?retryWrites=true&w=majority`);
     // mongoose.connect(`mongodb+srv://adityayafi:48wQ8aCUa2cpFuQQ@cluster0.0n0vm3g.mongodb.net/?retryWrites=true&w=majority`);
     console.log("MongoDB Connection Success")
 } catch (error) {
