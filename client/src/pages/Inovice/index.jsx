@@ -2,10 +2,11 @@ import { Card } from "antd";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { currentUser } from "../../utils";
 
 const Inovice = () => {
 
-    const {token} = JSON.parse(localStorage.getItem('auth'));
+    const {token} = JSON.parse(currentUser);
     const [invoice, setInvoice] = useState(null);
     const {id} = useParams();
     // const id = '64c88ae225c5407a247b21ef';

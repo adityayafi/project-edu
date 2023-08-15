@@ -11,7 +11,6 @@ import { setQuery } from '../../features/query/querySlice';
 
 
 const AppHeader = () => {
-    // const {user} = localStorage.getItem('auth')
     const pathname = window.location.pathname;
     const dispatch = useDispatch();
     const [category, setCategory] = useState([]);

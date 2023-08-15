@@ -8,12 +8,13 @@ import Confirm from './confirmOrder';
 import { useDispatch, useSelector } from 'react-redux';
 import { clearProd } from '../../features/cart/cartSlice';
 import { useNavigate } from 'react-router-dom';
+import { currentUser } from '../../utils';
 
 const Checkout = () => {
     
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const {token} = JSON.parse(localStorage.getItem('auth'))
+    const {token} = JSON.parse(currentUser)
     const [current, setCurrent] = useState(0);
     const [address, setAddress] = useState([]);
     const [selectedAddress, setSelectedAddress] = useState('');

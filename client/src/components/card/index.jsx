@@ -2,7 +2,7 @@ import { TagLabel } from "../../components/tag";
 import {Button, Card, Col, Skeleton} from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCartPlus} from '@fortawesome/free-solid-svg-icons'
-import { Rupiah } from "../../utils";
+import { Rupiah, currentUser } from "../../utils";
 import { useDispatch } from "react-redux";
 import { addProdToCart } from "../../features/cart/cartSlice";
 import SkeletonImage from "antd/es/skeleton/Image";
@@ -11,11 +11,10 @@ const {Meta} = Card;
 
 const Cards = ({items, keyCard}) => {
 
-    let user = localStorage.getItem('auth');
     const dispatch = useDispatch();
 
     const handleCart = () => {
-        if(!user) return window.location.assign('/login');
+        if(!currentUser) return window.location.assign('/login');
         dispatch(addProdToCart(items));
     }   
 

@@ -1,5 +1,5 @@
 import { Button, Card } from "antd";
-import { Rupiah } from "../../utils";
+import { Rupiah, currentUser } from "../../utils";
 import DataTable from "react-data-table-component";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus, faMinus} from '@fortawesome/free-solid-svg-icons'
@@ -12,7 +12,7 @@ import { Link } from "react-router-dom";
 const Cart = () => {
     const dispatch = useDispatch();
     const cart = useSelector((state) => state.cart);
-    const user = JSON.parse(localStorage.getItem('auth'));
+    const user = JSON.parse(currentUser);
     const product = useSelector((state) => state.cart.products)
 
     useEffect(() => {
