@@ -22,10 +22,11 @@ const show = async (req, res, next) => {
 
         return res.json(invoice)
     } catch (err) {
-        return res.json({
-            error: 1,
-            message: 'Error when getting invoice.'
-        });
+        // return res.json({
+        //     error: 1,
+        //     message: 'Error when getting invoice.'
+        // });
+        next(err)
     }
 }
 
@@ -43,10 +44,12 @@ const getAll = async (req, res, next) => {
         
         return res.json(invoice);
     } catch (err) {
-        return res.json({
-            error: 1,
-            message: 'Error when getting invoice.'
-        });
+        // return res.json({
+        //     error: 1,
+        //     message: 'Error when getting invoice.'
+        // });
+
+        next(err)
     }
 }
 
@@ -66,10 +69,12 @@ const index = async (req, res, next) => {
         return res.json(invoice);
         
     } catch (err) {
-        return res.json({
-            error: 1,
-            message: 'Error when getting invoice.'
-        });
+        // return res.json({
+        //     error: 1,
+        //     message: 'Error when getting invoice.'
+        // });
+
+        next(err)
 
     }
 }
@@ -82,10 +87,12 @@ const update = async (req, res, next) => {
 
         return res.json(invoice);
     } catch (err) {
-        return res.json({
-            error: 1,
-            message: 'Error when updating invoice.'
-        });
+        // return res.json({
+        //     error: 1,
+        //     message: 'Error when updating invoice.'
+        // });
+
+        next(err)
     }
 }
 
