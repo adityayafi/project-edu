@@ -2,7 +2,6 @@ import axios from "axios"
 
 export const getProduct = async (params) => {
     return await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/products?${params}`)
-    // .then(res => console.log(res.data.data))
 }
 
 export const getCategories = async () => {
