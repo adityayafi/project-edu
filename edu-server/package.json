@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "nodemon app.js",
-    "start": "node --unhandled-rejections=strict ./bin/www"
+    "start": "node --unhandled-rejections=strict app.js"
   },
   "dependencies": {
     "@casl/ability": "^5.4.4",
