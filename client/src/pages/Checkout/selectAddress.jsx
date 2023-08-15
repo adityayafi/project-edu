@@ -1,5 +1,4 @@
 import { Table } from "antd";
-import TableAddress from "../../components/address/tableAddress";
 
 const SlcAddress = ({col, data, select}) => {
 
