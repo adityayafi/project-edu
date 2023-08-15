@@ -8,9 +8,6 @@ const Tag = require('../tag/model');
 const store = async (req, res, next) => {
     try {
         let payload = req.body;
-        // console.log(payload)
-        // let tag = payload.tags.split(",")
-        // console.log(tag)
 
         // update -> relasi dengan category
         if(payload.category){

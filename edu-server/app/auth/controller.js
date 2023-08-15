@@ -48,39 +48,49 @@ const localStrategy = async (email, password, done) => {
 
 const login = (req, res, next) => {
     passport.authenticate('local', async function(err, user){
-        if(err) return next(err);
+        try {
+            if(err) return next(err);
+    
+            if(!user) return res.json({error: 1, message: 'Email or Password incorrect'});
+    
+            let signed = jwt.sign(user, config.secretKey);
+    
+            await User.findByIdAndUpdate(user._id, {$push: {token: signed}});
+    
+            return res.json({
+                message: 'Login Successfully',
+                user,
+                token: signed
+            });
 
-        if(!user) return res.json({error: 1, message: 'Email or Password incorrect'});
-
-        let signed = jwt.sign(user, config.secretKey);
-
-        await User.findByIdAndUpdate(user._id, {$push: {token: signed}});
-
-        return res.json({
-            message: 'Login Successfully',
-            user,
-            token: signed
-        });
+        } catch (err) {
+            next(err)
+        }
         
     })(req, res, next)
 }
 
 const logout = async (req, res, next) => {
-    let token = getToken(req);
-
-    let user = await User.findOneAndUpdate({token: {$in: [token]}}, {$pull: {token: token}}, {useFindAndModify: false});
-
-    if(!token || !user) {
-        res.json({
-            error: 1,
-            message: 'No User Found !!!'
+    try {
+        let token = getToken(req);
+    
+        let user = await User.findOneAndUpdate({token: {$in: [token]}}, {$pull: {token: token}}, {useFindAndModify: false});
+    
+        if(!token || !user) {
+            res.json({
+                error: 1,
+                message: 'No User Found !!!'
+            })
+        }
+    
+        return res.json({
+            error: 0,
+            message: 'LogOut Success'
         })
+        
+    } catch (err) {
+        next(err)
     }
-
-    return res.json({
-        error: 0,
-        message: 'LogOut Success'
-    })
 }
 
 const me = (req, res, next) => {
