@@ -9,6 +9,7 @@ const store = async (req, res, next) => {
     try {
         let payload = req.body;
 
+
         // update -> relasi dengan category
         if(payload.category){
             let category = await Category
