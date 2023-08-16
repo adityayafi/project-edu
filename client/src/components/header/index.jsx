@@ -88,7 +88,7 @@ const AppHeader = () => {
                 <div className="flex items-center justify-between h-16">
                     <div className="flex items-center">
                         <div className="text-white text-xl">
-                            <Link onClick={() => window.location.assign('/')}>Restaurant</Link>
+                            <Link onClick={() => window.location.assign('/')}>Let's Get Eat</Link>
                         </div>
                     </div>
                     <div className="flex items-center">
