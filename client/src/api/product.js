@@ -1,7 +1,11 @@
 import axios from "axios"
 
 export const getProduct = async (params) => {
-    return await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/products?${params}`)
+    return await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/products?${params}`, {
+        headers : {
+            'Access-Control-Allow-Origin':'*'
+        }
+    })
 }
 
 export const getCategories = async () => {
