@@ -80,7 +80,7 @@ const Home = () => {
                     ) : (
                         data.map((items, i) => {
                             return (
-                                <Cards items={items} keyCard={i}/>
+                                <Cards items={items} key={i}/>
                             )
                         })
                     )

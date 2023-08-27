@@ -151,7 +151,8 @@ const update = async (req, res, next) => {
 
         if(payload.tags && payload.tags.length > 0){
             let tags = await Tag
-            .find({name: {$in: payload.tags}})
+            // .find({name: {$in: payload.tags}})
+            .find({name: {$in: payload.tags.split(",")}})
             if(tags.length){
                 payload = {...payload, tags: tags.map(tag => tag._id)}
             }else{
@@ -179,10 +180,11 @@ const update = async (req, res, next) => {
                         fs.unlinkSync(currentImage);
                     }
                     
-                    product = await Product.findByIdAndUpdate(id, payload, {
+                    product = await Product.findByIdAndUpdate(id, {...payload, image_url: filename}, {
                         new: true,
                         runValidators: true
                     });
+                    console.log(payload)
                     return res.json(product);
 
                 } catch (err) {
