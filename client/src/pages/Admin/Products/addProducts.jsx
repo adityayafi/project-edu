@@ -1,10 +1,11 @@
-import { Button, Col, Form, Input, Modal, Row, Select, Upload } from "antd";
+import { Button, Col, Form, Input, Modal, Popconfirm, Row, Select, Upload, message } from "antd";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { currentUser } from "../../../utils";
 import { useNavigate } from "react-router-dom";
+import ConfirmButton from "../../../components/ConfirmButton";
 const { TextArea } = Input;
 const getBase64 = (file) =>
   new Promise((resolve, reject) => {
@@ -156,7 +157,17 @@ const AddProduct = () => {
                         </Form.Item>                     
                     </Col>
                 </Row>
-                <Button className="w-full mt-4 h-9" type="primary" htmlType="submit" danger onClick={handleAddProduct}>Simpan</Button>                    
+
+                <ConfirmButton 
+                    title='Add New Product'
+                    description='Are you sure the data is correct?'
+                    onCancel={() => message.error('Adding new data cancelled')}
+                    onConfirm={() => handleAddProduct}
+                    buttonClass='w-full mt-4 h-9'
+                    buttonTitle='Simpan'
+                    buttonHtmlType='submit'
+                    danger={true}
+                />
             </Form>
 
 

@@ -1,11 +1,11 @@
-import { Button, Col, Form, Input, Modal, Row, Skeleton, Upload } from "antd";
+import { Button, Col, Form, Image, Input, Modal, Row, Select, Upload } from "antd";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { currentUser } from "../../../utils";
 import { useNavigate, useParams } from "react-router-dom";
-import Select from 'react-select';
+// import Select from 'react-select';
 const { TextArea } = Input;
 const getBase64 = (file) =>
   new Promise((resolve, reject) => {
@@ -15,15 +15,6 @@ const getBase64 = (file) =>
     reader.onerror = (error) => reject(error);
   });
 
-const initialError = {
-    name: [],
-    desc: [],
-    price: [],
-    image: [],
-    cat: [],
-    tags: [],
-}
-
 const UpdateProduct = () => {
 
     const {token} = JSON.parse(currentUser);
@@ -31,8 +22,7 @@ const UpdateProduct = () => {
     const {id} = useParams();
     const navigate = useNavigate();
 
-    const [error, setError] = useState(initialError)
-    const [loading, setLoading] = useState(true);
+    // const [loading, setLoading] = useState(true);
     const [previewOpen, setPreviewOpen] = useState(false);
     const [previewImage, setPreviewImage] = useState('');
     const [previewTitle, setPreviewTitle] = useState('');
@@ -54,12 +44,9 @@ const UpdateProduct = () => {
 
     const handleChange = ({fileList: newFileList}) => {
         setFileList(newFileList);
-        setNewData({...newData, image_url: newFileList[0].originFileObj});
+        setNewData({...newData, image_url: newFileList[0]?.originFileObj});
     }
 
-    // const handleChange = (e) => {
-    //     console.log(e.target.files[0])
-    // }
 
     const fetchUpdateData = async () => {
         const resp = await axios.get(`${BASE_URL}/api/products/${id}`)
@@ -78,9 +65,8 @@ const UpdateProduct = () => {
                 value: tag.name,
             }))
         });
-        setLoading(false);
     }
-    // console.log(newData)
+    console.log(newData)
 
     const fetchCat = async () => {
         const resp = await axios.get(`${BASE_URL}/api/categories`)
@@ -98,10 +84,18 @@ const UpdateProduct = () => {
         e.preventDefault()
 
         const formData = new FormData();
-        if(newData.name)
+        newData.name? formData.append('name', newData.name) : null;
+        newData.desc? formData.append('description', newData.desc) : null;
+        newData.price? formData.append('price', newData.price) : null;
+        newData.image_url? formData.append('image', newData.image_url) : null;
+        newData.category? formData.append('category', newData.category) : null;
+        newData.tags? formData.append('tags', newData.tags) : null;
+
+        // console.log(...formData)
+        
 
         try {
-            const resp = await axios.put(`${BASE_URL}/api/products/${id}`, newData, {
+            const resp = await axios.put(`${BASE_URL}/api/products/${id}`, formData, {
                 headers: {
                     "Content-Type":'multipart/form-data',
                     Authorization : `Bearer ${token}`
@@ -125,121 +119,60 @@ const UpdateProduct = () => {
 
     },[])
 
-    const formValidator = () => {
-        if(!document.forms['updateForm']['name'].value){
-            setError((error) => ({...error, name: [...error.name, 'This field is required !']}))
-        }
-        // if(document.forms['updateForm']['name'].value.length() < 3){
-        //     setError((error) => ({...error, name: [...error.name, 'Minimum name is 3 character !']}))
-        // }
-        if(!document.forms['updateForm']['desc'].value){
-            setError((error) => ({...error, desc: [...error.desc, 'This field is required !']}))
-        }
-        if(!document.forms['updateForm']['price'].value){
-            setError((error) => ({...error, price: [...error.price, 'This field is required !']}))
-        }
-        // if(!document.forms['updateForm']['image'].newFileList){
-        //     setError((error) => ({...error, image: [...error.image, 'This field is required !']}))
-        // }
-        if(!document.forms['updateForm']['cat'].value){
-            setError((error) => ({...error, cat: [...error.cat, 'This field is required !']}))
-        }
-        if(!document.forms['updateForm']['tags'].value){
-            setError((error) => ({...error, tags: [...error.tags, 'This field is required !']}))
-        }
-
-        if (!document.forms['updateForm']['name'].value || document.forms['updateForm']['name'].value < 3
-        || !document.forms['updateForm']['desc'].value || !document.forms['updateForm']['price'].value 
-        || !document.forms['updateForm']['image'].value || !document.forms['updateForm']['cat'].value || !document.forms['updateForm']['tags'].value) return;
-    }
-
     // console.log(document.forms['updateForm']['desc'].length())
+    // let test = document.getElementsByName('updateForm')
+    // console.log(test)
 
-    const CatOpt = 
-        category.map(item => ({
-            label: item.name,
-            value: item.name
-        }))
-
-    const TagOpt = 
-        tags.map(item => ({
-            label: item.name,
-            value: item.name
-        }))
 
         // console.log(data);
 
+    const prevValue = {
+        name: data.name,
+        desc: data.desc,
+        price : data.price,
+        image: data.image,
+        cat: data.cat,
+        tag: data.tags
+
+    }
+
     return (
         <div className="px-4 py-3 w-screen">
-            <form name="updateForm" onSubmit={handleUpdate}>
+            <Form layout="vertical" initialValues={prevValue} key={data}>
                 <Row>
-                    <Col span={12} className="pr-2">
-                        <div className="mb-7">
-                            <label htmlFor="">Nama Produk</label><br/>
-                            <input 
-                                name="name" 
-                                type="text" 
-                                defaultValue={data.name} 
-                                className="border border-slate-300 rounded flex h-8 w-full mt-2 p-3"
-                                onChange={e => setNewData({...newData, name: e.target.value})}
+                    <Col span={12} className='pr-2'>
+                        <Form.Item name='name' label='Nama Produk' rules={[{required: true, message: 'Please input the product name'}, {min: 3, message: 'Minimum name is 3 characters'}]} >
+                            <Input type='text' onChange={e => setNewData({...newData, name: e.target.value})}/>
+                        </Form.Item>
+                        <Form.Item name='desc' label='Deskripsi Produk' rules={[{required: true, message: 'Please input the product description'}]} >
+                            <TextArea
+                            showCount
+                            maxLength={1000}
+                            style={{height: 283, resize: 'none'}}
+                            onChange={e => setNewData({...newData, desc: e.target.value})} 
                             />
-                            {error.name && error.name.map(err => <span style={{fontSize: '13px', color: 'red', marginTop: '-15px'}} key={err}>* {err}</span>)}
-                        </div>
-                        <div className="mb-2">
-                            <label htmlFor="">Deskripsi Produk</label><br/>
-                            <textarea 
-                                name="desc" 
-                                type="text" 
-                                defaultValue={data.desc} 
-                                className="border border-slate-300 rounded flex w-full mt-2 p-3" 
-                                style={{height: 297, resize: 'none'}}
-                                onChange={e => setNewData({...newData, desc: e.target.value})}                                
-                            />
-                            {error.desc && error.desc.map(err => <span style={{fontSize: '13px', color: 'red', marginTop: '-15px'}} key={err}>* {err}</span>)}
-                        </div>
+                        </Form.Item>                       
                     </Col>
                     <Col span={12}>
-                        <div className="mb-7">
-                            <label htmlFor="">Harga Produk</label><br/>
-                            <input 
-                                name="price" 
-                                type="number" 
-                                defaultValue={data.price} 
-                                className="border border-slate-300 rounded flex h-8 w-full mt-2 p-3"
-                                onChange={e => setNewData({...newData, price: e.target.value})}
-                            />
-                            {error.price && error.price.map(err => <span style={{fontSize: '13px', color: 'red', marginTop: '-15px'}} key={err}>* {err}</span>)}
-                        </div>
-                        <div className="mb-6">
-                            <label htmlFor="">Foto Produk</label><br/>
-                            <Row>
-                                <Col span={6}>
-                                    {
-                                        loading? 
-                                        <Skeleton.Image 
-                                            active 
-                                            className="mt-1" 
-                                            style={{height: '100.4px', width: '100.4px'}}
-                                        />
-                                        :
-                                        <div >
-                                            <img 
-                                                src={`${BASE_URL}/public/${data.image_url}`} 
-                                                style={{height: '100.4px', width: '100.4px'}} 
-                                                className="rounded-lg border border-slate-300 mt-2"
-                                            />
-                                            {/* <span>Current Picture</span> */}
-                                        </div>
-                                    }
-                                </Col>
-                                <Col span={6}>
+                        <Form.Item name='price' label='Harga Produk' rules={[{required: true, message: 'Please input the product price'}]} >
+                            <Input type='number' onChange={e => setNewData({...newData, price: e.target.value})} />
+                        </Form.Item>
+                        <Row>
+                            <Col span={6}>
+                                <Form.Item label='Foto Produk Saat Ini'>
+                                    <Image src={`${BASE_URL}/public/${data.image_url}`} style={{height: '100.4px', width: '100.4px'}}/>
+                                </Form.Item>
+                            </Col>
+                            <Col span={6}>
+                                <Form.Item name='image' label='Foto Produk'>
                                     <Upload
-                                        name="image" 
-                                        listType="picture-card"
-                                        onPreview={handlePreview}
-                                        beforeUpload={() => {return false}}
-                                        onChange={handleChange}                                        
-                                        className="mt-2"                                        
+                                    name="image" 
+                                    listType="picture-card"
+                                    onPreview={handlePreview}
+                                    // customRequest={info => setFileList(info.file)}
+                                    beforeUpload={() => {return false}}
+                                    onChange={handleChange}
+                                    onRemove={() => delete newData.image_url}
                                     >
                                         {
                                             fileList.length <= 0  ? 
@@ -256,47 +189,31 @@ const UpdateProduct = () => {
                                             : null
                                         }
                                     </Upload>
-                                    {error.image && error.image.map(err => <span style={{fontSize: '13px', color: 'red', marginTop: '-15px'}} key={err}>* {err}</span>)}                                                           
-                                </Col>
-                            </Row>
-                        </div>
-                        <div className="mb-7">
-                            <label htmlFor="">Kategori Produk</label><br/>
-                            <Select
-                                name="cat" 
-                                className="mt-2" 
-                                defaultValue={data.cat} 
-                                options={CatOpt} 
-                                key={data.cat}
-                                onChange={e => setNewData({...newData, category: e.value})}
-                            />
-                            {error.cat && error.cat.map(err => <span style={{fontSize: '13px', color: 'red', marginTop: '-15px'}} key={err}>* {err}</span>)}
-                        </div>
-                        <div className="mb-7">
-                            <label htmlFor="">Tag Produk</label><br/>
-                            <Select 
-                                name="tags"
-                                className="mt-2" 
-                                defaultValue={data.tags} 
-                                isMulti 
-                                options={TagOpt} 
-                                key={data.tags}
-                                delimiter=","                                
-                                onChange={e => setNewData({...newData, tags: e.map(tag => tag.value).toString()})}
-                            />
-                            {error.tags && error.tags.map(err => <span style={{fontSize: '13px', color: 'red', marginTop: '-15px'}} key={err}>* {err}</span>)}
-                        </div>
+                                </Form.Item>
+                            </Col>
+                        </Row>                        
+                        <Form.Item name='cat' label='Kategori Produk' rules={[{required: true, message: 'Please input the product category'}]} >
+                            <Select onChange={e => setNewData({...newData, category: e})}>
+                                    {
+                                        category.map((items) => {
+                                            return <Select.Option key={items._id} value={items.name}>{items.name}</Select.Option>
+                                        })
+                                    }
+                            </Select>
+                        </Form.Item>
+                        <Form.Item name='tag' label='Tag Produk' rules={[{required: true, message: 'Please input the product tag'}]} >
+                            <Select mode="tags" onChange={e => setNewData({...newData, tags: e.map(tag => tag).toString()})} >
+                                {
+                                    tags.map((items, i) => {
+                                        return <Select.Option key={items._id} value={items.name}>{items.name}</Select.Option>
+                                    })
+                                }
+                            </Select>
+                        </Form.Item>                     
                     </Col>
                 </Row>
-                <Button 
-                    className="w-full mt-4 h-9" 
-                    type="primary" 
-                    htmlType="submit" 
-                    danger
-                >
-                    Simpan
-                </Button>
-            </form>
+                <Button className="w-full mt-4 h-9" type="primary" htmlType="submit" danger onClick={handleUpdate}>Simpan</Button>                 
+            </Form>
 
             <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={() => setPreviewOpen(false)}>
                 <img

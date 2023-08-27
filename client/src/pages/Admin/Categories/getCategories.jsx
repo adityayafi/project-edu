@@ -1,12 +1,15 @@
-import { Button, Card, Col, Row, Table } from "antd";
+import { Button, Card, Col, Form, Input, Row, Table, message } from "antd";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { currentUser } from "../../../utils";
+import ConfirmButton from "../../../components/ConfirmButton";
 
 const GetCategories = () => {
 
     const {token} = currentUser ? JSON.parse(currentUser) : null
     const BASE_URL = import.meta.env.VITE_BACKEND_URL;
+    const [form] = Form.useForm();
+    const [myForm] = Form.useForm();
 
     const [categories, setCategories] = useState([]);
     const [isUpdate, setIsUpdate] = useState(false);
@@ -36,7 +39,7 @@ const GetCategories = () => {
         })
         fetchCatData();
         setCatData('');
-        e.target.reset();
+        form.setFieldsValue({cat: ''})
     }
 
     const handleDeleteCat = async (id) => {
@@ -48,13 +51,13 @@ const GetCategories = () => {
         fetchCatData();
     }
 
-    const handleUpdateCat = async (id, e) => {
-        e.preventDefault()
+    const handleUpdateCat = async () => {
+
         let body = {
             name: catUpdate
         }
 
-        const resp = await axios.put(`${BASE_URL}/api/categories/${id}`, body, {
+        const resp = await axios.put(`${BASE_URL}/api/categories/${toUpdate._id}`, body, {
             headers:{'Authorization': `Bearer ${token}`}
         })
 
@@ -62,9 +65,11 @@ const GetCategories = () => {
         fetchCatData();
         setCatUpdate('');
         setToUpdate({})
-        e.target.reset();
+        setIsUpdate(false);
+        myForm.setFieldsValue({UpdateCat: ''})
+        message.success('Category updated successfully')
     }
-    console.log(toUpdate)
+    // console.log(toUpdate)
 
     const col = [
         {
@@ -78,7 +83,15 @@ const GetCategories = () => {
             render:(record)=> (
                 <div>
                     <Button type="primary" htmlType="" className="mx-2" onClick={() => handleToUpdate(record)}>Update</Button>
-                    <Button type="primary" htmlType="" className="mx-2" danger onClick={() => handleDeleteCat(record._id)}>Delete</Button>
+                    <ConfirmButton 
+                        title='Delete Category'
+                        description='Are you sure want to delete this category?'
+                        onCancel={() => message.error('Delete category cancelled')}
+                        onConfirm={() => handleDeleteCat(record._id)}
+                        danger={true}
+                        buttonClass='mx-2'
+                        buttonTitle='Delete'                      
+                    />                    
                 </div>
             ),
             align: 'center',
@@ -98,31 +111,36 @@ const GetCategories = () => {
             </Col>
             <Col span={12} className="pl-1">
                 <Card title='Add Categories' size="small">
-                    <form onSubmit={e => handleNewCat(e)}>
-                        <label htmlFor="cat">Nama Kategori</label>
-                        <input 
-                        type="text" 
-                        name="cat" 
-                        className="border border-slate-300 rounded flex h-8 w-full mt-2 p-3"
-                        onChange={(e) => setCatData(e.target.value)}
+                    <Form form={form} layout="vertical">
+                        <Form.Item label='Nama Kategori' name='cat' rules={[{required: true, message: 'Please input category name !'}]}>
+                            <Input type="text" onChange={(e) => setCatData(e.target.value)}/>
+                        </Form.Item>
+                        <ConfirmButton 
+                            title='Add new category'
+                            description='Are you sure the data is correct?'
+                            onCancel={() => message.error('Adding new category cancelled')}
+                            onConfirm={handleNewCat}
+                            buttonClass='mt-6'
+                            buttonTitle='Simpan'                            
                         />
-                        <Button type="primary" htmlType="submit" className="mt-6 bg-[#1677ff]">Simpan</Button>
-                    </form>
+                    </Form>
                 </Card>
                 <Card title='Update Categories' size="small" className="mt-4">
-                    <form onSubmit={(e) => handleUpdateCat(toUpdate._id, e)}>
-                        <label htmlFor="cat">Nama Kategori</label>
-                        <input 
-                        type="text" 
-                        name="cat" 
-                        defaultValue={toUpdate.name} 
-                        className="border border-slate-300 rounded flex h-8 w-full mt-2 p-3" 
-                        disabled={!isUpdate}
-                        onChange={(e) => setCatUpdate(e.target.value)}
+                    <Form layout="vertical" form={myForm} initialValues={{UpdateCat: toUpdate.name}} key={{toUpdate}}>
+                        <Form.Item label='Nama Kategori' name='UpdateCat' rules={[{required: true, message: 'Please input category name !'}]}>
+                            <Input type="text" disabled={!isUpdate} onChange={(e) => setCatUpdate(e.target.value)}/>
+                        </Form.Item>
+                        <ConfirmButton 
+                            title='Update category'
+                            description='Are you sure the data is correct?'
+                            onCancel={() => message.error('Updating category cancelled')}
+                            onConfirm={handleUpdateCat}
+                            disabled={!isUpdate}
+                            buttonTitle='Simpan'
+
                         />
-                        <Button type="primary" htmlType="submit" className="bg-[#1677ff]" disabled={!isUpdate} >Simpan</Button>
                         <Button type="primary" htmlType="" className="ml-2 mt-6" disabled={!isUpdate} onClick={() => {setIsUpdate(false); setToUpdate({})}} danger>Batal</Button>
-                    </form>
+                    </Form>
                 </Card>
             </Col>
         </Row>

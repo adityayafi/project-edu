@@ -1,14 +1,19 @@
 import { useEffect, useState } from "react";
 import { getProduct } from "../../../api/product";
-import { Button, Table } from "antd";
+import { Button, Col, Input, Popconfirm, Row, Table, message } from "antd";
 import { Rupiah, currentUser } from "../../../utils";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import { setQuery } from "../../../features/query/querySlice";
+import ConfirmButton from "../../../components/ConfirmButton";
 
 const GetProduct = () => {
 
     const {token} = currentUser ? JSON.parse(currentUser) : null
+    const query = useSelector(state => state.query)
     const BASE_URL = import.meta.env.VITE_BACKEND_URL;
+    const dispatch = useDispatch();
 
     const navigate = useNavigate();
     const [products, setProducts] = useState([]);
@@ -17,7 +22,7 @@ const GetProduct = () => {
 
     const fetchProducts = async () => {
         try {
-            const res = await getProduct(`skip=${(currentPage - 1) * 5}&limit=${5}`)
+            const res = await getProduct(`q=${query.q}&skip=${(currentPage - 1) * 5}&limit=${5}`)
             setProducts(res.data.data);
             setTotalPage(res.data.count);
             if (res.data.count <= 5 ){
@@ -30,7 +35,7 @@ const GetProduct = () => {
 
     useEffect(() => {
         fetchProducts();
-    },[currentPage])
+    },[currentPage, query])
 
     const handleDeleteProduct = async (id) => {
         // console.log(id)
@@ -70,21 +75,42 @@ const GetProduct = () => {
             key: 'actions',
             render:(record)=> (
                 <div>
-                    <Button type="primary" htmlType="" className="mx-2" onClick={() => handleUpdateProduct(record._id)}>Update</Button>
-                    <Button type="primary" htmlType="" className="mx-2" danger onClick={() => handleDeleteProduct(record._id)}>Delete</Button>
+                    <ConfirmButton 
+                        title='Update Product'
+                        desc='Are you sure want to update this data'
+                        onCancel={() => message.error('Update data cancelled')}
+                        onConfirm={() => handleUpdateProduct(record._id)}
+                        buttonClass='mx-2'
+                        buttonTitle='Update'                        
+                    />
+                    <ConfirmButton 
+                        title='Delete Product'
+                        description='Are you sure want to delete this data?'
+                        onCancel={() => message.error('Delete data cancelled')}
+                        onConfirm={() => handleDeleteProduct(record._id)}
+                        buttonClass='mx-2'
+                        buttonTitle='Delete'
+                        danger={true}
+                    />
                 </div>
             ),
             align: 'center',
         }
     ]
-    // console.log(currentPage)
     
 
     return (
         <div className="px-4 py-3 w-screen">
-            <Link to={'/account/admin/products/add'}>
-                <Button className="mb-8" type="primary" htmlType="">Tambah Produk</Button>
-            </Link>
+            <Row>
+                <Col span={12}>
+                    <Link to={'/account/admin/products/add'}>
+                        <Button className="mb-8" type="primary" htmlType="">Tambah Produk</Button>
+                    </Link>
+                </Col>
+                <Col span={12}>
+                    <Input placeholder="Search product here..." className="border border-slate-400" onChange={(e) => dispatch(setQuery({q:e.target.value}))}/>                  
+                </Col>
+            </Row>
             <Table columns={col} dataSource={products} pagination={{current: currentPage, defaultPageSize: 5, total: totalPage, onChange: (page) => {setcurrentPage(page); console.log(currentPage)}}}/>
         </div>
     )

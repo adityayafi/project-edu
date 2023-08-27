@@ -1,5 +1,5 @@
 import { TagLabel } from "../../components/tag";
-import {Button, Card, Col, Skeleton} from 'antd';
+import {Button, Card, Col, Skeleton, message} from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCartPlus} from '@fortawesome/free-solid-svg-icons'
 import { Rupiah, currentUser } from "../../utils";
@@ -16,6 +16,7 @@ const Cards = ({items, keyCard}) => {
     const handleCart = () => {
         if(!currentUser) return window.location.assign('/login');
         dispatch(addProdToCart(items));
+        message.success('Berhasil menambahkan barang ke keranjang.')
     }   
 
     return (
@@ -30,8 +31,8 @@ const Cards = ({items, keyCard}) => {
                 {items.tags.map((tag, i) => {return <TagLabel key={i}  name={tag.name} keys={tag._id}/>})}
             </div>
             <span className="flex font-medium text-slate-500">{Rupiah(items.price)}</span>
-            <Button type="primary" className="bg-[#1677ff] mt-4 hover:bg-[#1677ff]" onClick={() => handleCart(items)}><FontAwesomeIcon icon={faCartPlus} className="text-white"/></Button>
-        </Card>                    
+            <Button type="primary" className="bg-[#1677ff] mt-4 hover:bg-[#1677ff] w-full" onClick={() => handleCart(items)}><FontAwesomeIcon icon={faCartPlus} className="text-white"/></Button>
+        </Card>
     </Col>
     )
 }
